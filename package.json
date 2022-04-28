@@ -1,0 +1,24 @@
+{
+  "name": "hooks-a-plenty",
+  "version": "0.1.0",
+  "description": "Loads of react hooks.",
+  "main": "dist/cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.js",
+  "scripts": {
+    "prepublish": "tsc && esbuild src/index.ts --bundle --format=cjs --outfile=dist/cjs.js"
+  },
+  "repository": "github:yellowsink/hooks-a-plenty",
+  "author": "Yellowsink",
+  "license": "Unlicense",
+  "bugs": "https://github.com/yellowsink/hooks-a-plenty/issues",
+  "homepage": "https://github.com/yellowsink/hooks-a-plenty#readme",
+  "devDependencies": {
+    "esbuild": "^0.14.38",
+    "react": "^18.1.0",
+    "typescript": "^4.6.3"
+  },
+  "peerDependencies": {
+    "react": "^18.1.0"
+  }
+}
