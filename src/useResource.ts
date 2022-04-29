@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import useRefState from "./useRefState";
+import useStealthState from "./useStealthState";
 
 type Fetcher<T> = () => Promise<T>;
 type Ret<T> = [undefined | T, any, () => void];
@@ -13,9 +13,9 @@ export default function <T>(
 ) {
   const [result, setResult] = useState<T>();
   // react <18 may not batch two states, so use a ref state
-  const [rejection, setRejection] = useRefState<any>();
+  const [rejection, setRejection] = useStealthState<any>();
 
-  const [isFirstCall, setIsFirstCall] = useRefState(true);
+  const [isFirstCall, setIsFirstCall] = useStealthState(true);
 
   const fetch = () =>
     (fetcher ?? triggerStateOrFetcher)().then(

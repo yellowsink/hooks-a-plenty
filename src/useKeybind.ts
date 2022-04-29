@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 type Modifiers = ("ctrl" | "alt" | "shift")[];
 type EventType = "keyup" | "keydown";
 
-interface KeybindArgs {
+export interface KeybindArgs {
   key: string;
   modifiers: Modifiers;
   on: (type: EventType, e: KeyboardEvent) => void;

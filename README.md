@@ -23,13 +23,13 @@ If you pass two arguments:
  - the fetcher is invoked whenever the triggerState value changes
  - the fecher is not invoked on the first call
 
-## useRefState
+## useStealthState
 You may have a case where you always set two states together, but you may be running in React <18.
 
 The problem with this is that the setState calls could not be batched,
 reducing performance with unnecessary rerenders.
 
-useRefState solves this by being a hook with the same API as useState, but that doesnt cause rerenders.
+useStealthState solves this by being a hook with the same API as useState, but that doesnt cause rerenders.
 
 No example really needed here, the only detail is hidden under-the-hood in not causing rerenders.
 
