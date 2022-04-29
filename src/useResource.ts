@@ -16,10 +16,10 @@ function useResource<T>(
 
   const fetch = () => (fetcher ?? triggerStateOrFetcher)().then(setResult);
 
+  // only needed in the if statement but at the top level because we are following the rules of hooks :)
+  // initially prev = triggerState so we don't trigger instantly
+  const prev = useRef(triggerStateOrFetcher);
   if (fetcher !== undefined) {
-    // initially prev = triggerState so we don't trigger instantly
-    const prev = useRef(triggerStateOrFetcher);
-
     if (prev.current !== triggerStateOrFetcher) {
       // fetcher has changed
       fetch();
