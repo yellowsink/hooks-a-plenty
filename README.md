@@ -41,6 +41,19 @@ const Example = () => {
 }
 ```
 
+### When you might not want to use separate hooks 
+Some apis may return an undo function from their init function. 
+One example of this is patching a function with spitroast. 
+In this case, useEffect is often cleaner 
+```js
+import { init } from "a-cool-lib";
+
+const Example = () => {
+    useEffect(() => init(), []);
+    return <div />;
+}
+```
+
 ## useRerender
 A cancerous hook for when you just give up on your life and need React to please for the love of god just rerender.
 
