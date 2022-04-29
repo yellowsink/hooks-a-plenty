@@ -1,35 +1,50 @@
 import { useRef, useState } from "react";
+import useRefState from "./useRefState";
 
 type Fetcher<T> = () => Promise<T>;
+type Ret<T> = [undefined | T, any, () => void];
 
-function useResource<T>(fetcher: Fetcher<T>): [undefined | T, () => void];
-function useResource<T>(
-  triggerState: unknown,
-  fetcher: Fetcher<T>
-): [undefined | T, () => void];
+export default function <T>(fetcher: Fetcher<T>): Ret<T>;
+export default function <T>(triggerState: unknown, fetcher: Fetcher<T>): Ret<T>;
 
-function useResource<T>(
+export default function <T>(
   triggerStateOrFetcher: Fetcher<T> | any,
   fetcher?: Fetcher<T>
 ) {
   const [result, setResult] = useState<T>();
+  // react <18 may not batch two states, so use a ref state
+  const [rejection, setRejection] = useRefState<any>();
 
-  const fetch = () => (fetcher ?? triggerStateOrFetcher)().then(setResult);
+  const [isFirstCall, setIsFirstCall] = useRefState(true);
+
+  const fetch = () =>
+    (fetcher ?? triggerStateOrFetcher)().then(
+      (res: T) => {
+        setRejection(undefined);
+        setResult(res);
+      },
+      (rej: any) => {
+        setRejection(rej);
+        setResult(undefined);
+      }
+    );
 
   // only needed in the if statement but at the top level because we are following the rules of hooks :)
   // initially prev = triggerState so we don't trigger instantly
   const prev = useRef(triggerStateOrFetcher);
-  if (fetcher !== undefined) {
-    if (prev.current !== triggerStateOrFetcher) {
-      // fetcher has changed
-      fetch();
-      prev.current = triggerStateOrFetcher;
+  if (isFirstCall) {
+    if (fetcher !== undefined) {
+      if (prev.current !== triggerStateOrFetcher) {
+        // fetcher has changed
+        fetch();
+        prev.current = triggerStateOrFetcher;
+      }
     }
+    // just run now lmao
+    else fetch();
+
+    setIsFirstCall(false);
   }
-  // just run now lmao
-  else fetch();
 
-  return [result, fetch];
+  return [result, rejection, fetch];
 }
-
-export default useResource;

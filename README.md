@@ -2,6 +2,63 @@
 
 A big lib full of React hooks.
 
+## useResource
+This allows easy data fetching. The API is heavily inspired by solid.js' createResource.
+
+```ts
+function useResource<T>(fetcher: () => Promise<T>): [undefined | T, any, () => void];
+```
+If you pass only one argument:
+ - the fetcher is invoked
+ - on resolve, rerenders
+ - if it fulfilled, sets the first returned value to the value
+ - if it rejected, sets the second returned value to the error
+
+The third returned value causes a re-fetch.
+
+```ts
+function useResource<T>(triggerState: unknown, fetcher: () => Promise<T>): [undefined | T, any, () => void];
+```
+If you pass two arguments:
+ - the fetcher is invoked whenever the triggerState value changes
+ - the fecher is not invoked on the first call
+
+## useRefState
+You may have a case where you always set two states together, but you may be running in React <18.
+
+The problem with this is that the setState calls could not be batched,
+reducing performance with unnecessary rerenders.
+
+useRefState solves this by being a hook with the same API as useState, but that doesnt cause rerenders.
+
+No example really needed here, the only detail is hidden under-the-hood in not causing rerenders.
+
+This hook is also quite useful for custom hook authors.
+
+## useFreeze
+Useful for libs and custom hooks, where you need the same args across re-renders.
+Freezes the argument it is passed on the first render and will return it on every subsequent call.
+
+```js
+const FrozenDiv = ({ children, ...props }) => {
+    const frozenChildren = useFreeze(children);
+    return <div {...props}>{frozenChildren}</div>;
+}
+
+const Example = () => {
+    const [count, setCount] = React.useState(1);
+
+    return (
+        <>
+            {/* always shows current count */}
+            <button onClick={() => setCount(count + 1)}>{count}</button>
+            {/* always shows 1, or whatever the default value of count is */}
+            <FrozenDiv>{count}</FrozenDiv>
+        </>
+    )
+}
+```
+
 ## useMount
 Like an effect but it unambiguously runs only on mount. This is equivalent to `useEffect(callback, [])` but has some benefits:
  - It is easier when reading code: It takes extra time and knowledge to comprehend that:
@@ -82,5 +139,5 @@ const Example = () => {
 }
 ```
 
-## TODO: document resource
-## TODO: document resource, freeze, keybind
+## TODO: document resource, keybind
+## TODO: add toggle, resize
