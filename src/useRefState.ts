@@ -1,7 +1,12 @@
-import { useRef, useState } from "react";
+import { useRef, Dispatch, SetStateAction } from 'react';
+import useForceUpdate from './useForceUpdate';
 
-export default ((init?) => {
-  const ref = useRef(init);
+export default <S>(initialState: S): [() => S, Dispatch<SetStateAction<S>>] => {
+  const ref = useRef(initialState);
+  const forceUpdate = useForceUpdate();
 
-  return [ref.current, (newVal) => (ref.current = newVal)];
-}) as typeof useState;
+  return [() => ref.current, (v: S | ((prevState: S) => S)) => {
+    ref.current = v instanceof Function ? v(ref.current) : v;
+    forceUpdate();
+  }];
+};
