@@ -83,3 +83,4 @@ const Example = () => {
 ```
 
 ## TODO: document resource
+## TODO: document resource, freeze, keybind
